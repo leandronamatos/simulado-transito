@@ -1,53 +1,34 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Simulado de Trânsito</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#17202a}
-header{background:#153e75;color:#fff;padding:24px 16px}.wrap{max-width:760px;margin:auto}
-.card{background:#fff;margin:20px 12px;padding:22px;border-radius:16px;box-shadow:0 3px 16px #0001}
-h1{margin:0 0 6px;font-size:26px}h2{font-size:21px}.muted{color:#667085}
-button{width:100%;padding:14px;margin:7px 0;border:1px solid #cbd5e1;border-radius:12px;background:#fff;font-size:16px;text-align:left;cursor:pointer}
-.primary{background:#153e75;color:#fff;border:0;text-align:center;font-weight:bold}.ok{background:#e8f7ed!important;border-color:#36a15b!important}
-.bad{background:#fdeaea!important;border-color:#d84b4b!important}.progress{height:8px;background:#e5e7eb;border-radius:10px;overflow:hidden}.bar{height:100%;background:#153e75}
-#quiz,#result{display:none}.tag{display:inline-block;padding:6px 10px;border-radius:20px;background:#e8f1ff;color:#153e75;font-weight:bold}
-</style>
-</head>
-<body>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#17202a}header{background:#153e75;color:#fff;padding:24px 16px}.wrap{max-width:760px;margin:auto}.card{background:#fff;margin:20px 12px;padding:22px;border-radius:16px;box-shadow:0 3px 16px #0001}h1{margin:0 0 6px;font-size:26px}h2{font-size:21px}.muted{color:#667085}button{width:100%;padding:14px;margin:7px 0;border:1px solid #cbd5e1;border-radius:12px;background:#fff;font-size:16px;text-align:left;cursor:pointer}.primary{background:#153e75;color:#fff;border:0;text-align:center;font-weight:bold}.ok{background:#e8f7ed!important;border-color:#36a15b!important}.bad{background:#fdeaea!important;border-color:#d84b4b!important}.progress{height:8px;background:#e5e7eb;border-radius:10px;overflow:hidden}.bar{height:100%;background:#153e75}.tag{display:inline-block;padding:6px 10px;border-radius:20px;background:#e8f1ff;color:#153e75;font-weight:bold}.subject{font-weight:bold}.disabled{opacity:.5;cursor:not-allowed}#quiz,#result{display:none}.summary{padding:12px;background:#f8fafc;border-radius:12px;margin:12px 0}
+</style></head><body>
 <header><div class="wrap"><h1>Simulado de Trânsito</h1><div>Treinamento para reciclagem</div></div></header>
 <main class="wrap">
-<section id="home" class="card">
-<span class="tag">Simulado</span>
-<h2>Treine em rodadas de 15 questões</h2>
-<p>Correção automática, percentual de acertos e opção para refazer somente as questões erradas.</p>
-<p class="muted">A estrutura do site está pronta. O banco definitivo será preenchido apenas com as questões enviadas e gabaritos validados.</p>
-<button class="primary" onclick="start()">Testar funcionamento</button>
-</section>
-<section id="quiz" class="card">
-<div class="progress"><div id="bar" class="bar"></div></div>
-<p id="count" class="muted"></p><h2 id="question"></h2><div id="options"></div>
-</section>
-<section id="result" class="card">
-<h2>Seu resultado</h2><p id="score"></p>
-<button class="primary" onclick="start()">Nova rodada</button>
-<button id="retry" onclick="retryWrong()">Refazer erradas</button>
-</section>
+<section id="home" class="card"><span class="tag">Escolha a matéria</span><h2>O que você quer estudar?</h2><p class="muted">Cada rodada terá até 15 questões. Ao final, você poderá refazer somente as que errou.</p><div id="classes"></div></section>
+<section id="quiz" class="card"><div class="progress"><div id="bar" class="bar"></div></div><p id="subject" class="tag"></p><p id="count" class="muted"></p><h2 id="question"></h2><div id="options"></div></section>
+<section id="result" class="card"><span id="resultSubject" class="tag"></span><h2>Resultado da rodada</h2><div id="score" class="summary"></div><div id="overall" class="summary"></div><button id="retry" onclick="retryWrong()">Refazer somente as erradas</button><button id="next" class="primary" onclick="nextRound()">Próximas perguntas</button><button onclick="goHome()">Voltar às matérias</button></section>
 </main>
 <script>
 const questions=[
-{q:"Em uma emergência de trânsito, qual conduta deve vir antes do atendimento direto à vítima?",o:["Proteger o local e acionar socorro especializado","Dar água à vítima","Retirar imediatamente a vítima do veículo","Retirar o capacete de todo motociclista"],a:0},
-{q:"A distância de segurança do veículo à frente deve permitir ao condutor:",o:["Reagir e parar com segurança diante de um imprevisto","Impedir ultrapassagens","Evitar o uso dos retrovisores","Manter sempre a mesma velocidade"],a:0},
-{q:"O cinto de segurança deve ser usado:",o:["Somente pelo motorista","Somente em rodovias","Por todos os ocupantes do veículo","Somente nos bancos dianteiros"],a:2}
+{id:"PS-01",c:"Primeiros Socorros",q:"Em uma emergência de trânsito, qual conduta deve vir antes do atendimento direto à vítima?",o:["Proteger o local e acionar socorro especializado","Dar água à vítima","Retirar imediatamente a vítima do veículo","Retirar o capacete de todo motociclista"],a:0},
+{id:"DF-01",c:"Direção Defensiva",q:"A distância de segurança do veículo à frente deve permitir ao condutor:",o:["Reagir e parar com segurança diante de um imprevisto","Impedir ultrapassagens","Evitar o uso dos retrovisores","Manter sempre a mesma velocidade"],a:0},
+{id:"LT-01",c:"Legislação de Trânsito",q:"O cinto de segurança deve ser usado:",o:["Somente pelo motorista","Somente em rodovias","Por todos os ocupantes do veículo","Somente nos bancos dianteiros"],a:2}
 ];
-let qs=[],idx=0,wrong=[];
-function start(){qs=[...questions].sort(()=>Math.random()-.5);idx=0;wrong=[];home.style.display="none";result.style.display="none";quiz.style.display="block";show()}
-function show(){const x=qs[idx];count.textContent=`Questão ${idx+1} de ${qs.length}`;bar.style.width=`${idx/qs.length*100}%`;question.textContent=x.q;options.innerHTML="";
-x.o.forEach((v,n)=>{const b=document.createElement("button");b.textContent=String.fromCharCode(65+n)+") "+v;b.onclick=()=>answer(n,b);options.appendChild(b)})}
-function answer(n,b){[...options.children].forEach(x=>x.disabled=true);const x=qs[idx];if(n===x.a)b.classList.add("ok");else{b.classList.add("bad");options.children[x.a].classList.add("ok");wrong.push(x)}
-setTimeout(()=>{idx++;idx<qs.length?show():finish()},600)}
-function finish(){quiz.style.display="none";result.style.display="block";const hits=qs.length-wrong.length;score.textContent=`Você acertou ${hits} de ${qs.length} (${Math.round(hits/qs.length*100)}%).`;retry.style.display=wrong.length?"block":"none"}
-function retryWrong(){qs=[...wrong];idx=0;wrong=[];result.style.display="none";quiz.style.display="block";show()}
-</script>
-</body></html>
+const classOrder=["Primeiros Socorros","Direção Defensiva","Legislação de Trânsito","Relacionamento Interpessoal / Convívio Social","Meio Ambiente","Funcionamento do Veículo"];
+let selected="",remaining=[],qs=[],idx=0,wrong=[],roundWrong=[],classAnswered=0,classCorrect=0,isRetry=false;
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function renderClasses(){classes.innerHTML="";classOrder.forEach(c=>{let n=questions.filter(x=>x.c===c).length,b=document.createElement("button");b.innerHTML='<span class="subject">'+c+'</span><br><span class="muted">'+(n?n+" questão"+(n>1?"ões":"")+" disponível"+(n>1?"is":""):"Questões em preparação")+"</span>";if(n)b.onclick=()=>chooseClass(c);else{b.disabled=true;b.classList.add("disabled")}classes.appendChild(b)});let b=document.createElement("button");b.className="primary";b.textContent="Simulado Geral — todas as matérias";b.onclick=()=>chooseClass("Simulado Geral");classes.appendChild(b)}
+function chooseClass(c){selected=c;let pool=c==="Simulado Geral"?questions:questions.filter(x=>x.c===c);remaining=shuffle(pool);classAnswered=0;classCorrect=0;startRound()}
+function startRound(){isRetry=false;wrong=[];qs=remaining.splice(0,15);idx=0;home.style.display="none";result.style.display="none";quiz.style.display="block";show()}
+function show(){let x=qs[idx];subject.textContent=selected;count.textContent="Questão "+(idx+1)+" de "+qs.length;bar.style.width=(idx/qs.length*100)+"%";question.textContent=x.q;options.innerHTML="";x.o.forEach((v,n)=>{let b=document.createElement("button");b.textContent=String.fromCharCode(65+n)+") "+v;b.onclick=()=>answer(n,b);options.appendChild(b)})}
+function answer(n,b){[...options.children].forEach(x=>x.disabled=true);let x=qs[idx],hit=n===x.a;if(hit)b.classList.add("ok");else{b.classList.add("bad");options.children[x.a].classList.add("ok");wrong.push(x)}if(!isRetry){classAnswered++;if(hit)classCorrect++}setTimeout(()=>{idx++;idx<qs.length?show():finish()},650)}
+function finish(){quiz.style.display="none";result.style.display="block";resultSubject.textContent=selected;let hits=qs.length-wrong.length;score.innerHTML="<strong>"+hits+" acerto"+(hits!==1?"s":"")+"</strong> de "+qs.length+" — "+Math.round(hits/qs.length*100)+"%";overall.innerHTML="<strong>Desempenho nesta matéria:</strong> "+classCorrect+" acerto"+(classCorrect!==1?"s":"")+" em "+classAnswered+" questão"+(classAnswered!==1?"ões":"")+" respondida"+(classAnswered!==1?"s":"")+". "+(remaining.length?remaining.length+" questão"+(remaining.length!==1?"ões":"")+" ainda não respondida"+(remaining.length!==1?"s":"")+".":"Você concluiu todas as questões disponíveis desta matéria.");retry.style.display=wrong.length?"block":"none";roundWrong=[...wrong];next.style.display=(!isRetry&&remaining.length)?"block":"none";next.textContent="Próximas "+Math.min(15,remaining.length)+" pergunta"+(Math.min(15,remaining.length)!==1?"s":"")}
+function retryWrong(){qs=[...roundWrong];idx=0;wrong=[];isRetry=true;result.style.display="none";quiz.style.display="block";show()}
+function nextRound(){startRound()}
+function goHome(){quiz.style.display="none";result.style.display="none";home.style.display="block";renderClasses()}
+renderClasses();
+</script></body></html>
